@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
 </head>
 <body>
     <h1>Login</h1>
@@ -37,7 +34,12 @@
         <button type="submit">Register</button>
     </form>
 
-    <script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
         // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBl1T4ki48nC2F_n_OOt0P1Yg9WbiUehuE",
@@ -45,20 +47,21 @@
             projectId: "eyecare-app-123",
             storageBucket: "eyecare-app-123.appspot.com",
             messagingSenderId: "506619333364",
-            appId: "1:506619333364:web:b9cd7775add90aaed62ca1",
+            appId: "1:506619333364:web:2d3eae84f6aa4a15d62ca1",
+            measurementId: "G-RSPG2LWR43"
         };
 
         // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 console.log('User logged in:', userCredential.user);
                 alert('Login successful!');
             } catch (error) {
@@ -74,9 +77,9 @@
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
             try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
-                await db.collection('users').doc(user.uid).set({
+                await setDoc(doc(db, 'users', user.uid), {
                     name: {
                         firstName: firstName,
                         lastName: lastName
@@ -93,3 +96,4 @@
     </script>
 </body>
 </html>
+
